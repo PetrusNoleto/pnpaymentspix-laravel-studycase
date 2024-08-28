@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Services\CreatePaymentService;
-
+use App\Http\Services\CheckPaymentService;
 class MercadoPagoController extends Controller
 {
     private  $paymentId;
@@ -51,6 +51,34 @@ class MercadoPagoController extends Controller
             ]);
         }
     }
+    public function check(Request $request)
+    {
+        $this->paymentId = $request['paymentId'];
+        $this->paymentAccessToken = $request['paymentAccessToken'];
+        $newIdValue = intval($this->paymentId);
+        if(!$request['paymentId'] && !$request['paymentAccessToken']){
+            return response()->json([
+                'code'=>4402,
+                'data' => null,
+                'message' => 'payment not checked'
+            ]);
+        }else{
+            $checkController = new CheckPaymentService();
+            $checkPayment = $checkController->mercadopago($newIdValue,$this->paymentAccessToken);
+            $paymentData = [
+                "id" => $checkPayment->id,
+                "status" => $checkPayment->status,
+                "qrcode" => $checkPayment->point_of_interaction->transaction_data->qr_code,
+                "qrcodeImage" => $checkPayment->point_of_interaction->transaction_data->qr_code_base64
+            ];
+            return response()->json([
+                'code' => 2200,
+                'message' => 'payment checked',
+                'data' =>  $paymentData,  
+            ]);
+        }
+    }
+
 }
 
 

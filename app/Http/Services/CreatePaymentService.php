@@ -10,8 +10,6 @@ class CreatePaymentService {
     private  $paymentEmail;
     private  $paymentValue;
     private  $paymentDescription;
-
-
     function  __construct($defaultPaymentId = "", $defaultPaymentAccessToken = "", $defaultPaymentEmail = "", $defaultPaymentValue = "", $defaultPaymentDescription = "")
     {
         $this->paymentId = $defaultPaymentId;
